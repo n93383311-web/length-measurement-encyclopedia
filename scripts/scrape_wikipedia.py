@@ -3,7 +3,11 @@ from bs4 import BeautifulSoup
 
 URL = "https://en.wikipedia.org/wiki/Length"
 
-response = requests.get(URL)
+HEADERS = {
+    "User-Agent": "LengthMeasurementBot/1.0 (https://github.com/YOUR_USERNAME/length-measurement-encyclopedia)"
+}
+
+response = requests.get(URL, headers=HEADERS, timeout=20)
 response.raise_for_status()
 
 soup = BeautifulSoup(response.text, "html.parser")
@@ -21,4 +25,4 @@ output = "# Measurement of Length\n\n" + "\n\n".join(text)
 with open("data/wikipedia/length_measurement.md", "w", encoding="utf-8") as f:
     f.write(output)
 
-print("Wikipedia length page scraped.")
+print("Wikipedia length page scraped successfully.")
