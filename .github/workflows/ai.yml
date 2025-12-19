@@ -1,0 +1,33 @@
+name: AI Encyclopedia Writer
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *"   # всяка нощ
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run AI writer
+        env:
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+        run: python scripts/ai_writer.py
+
+      - name: Commit encyclopedia
+        run: |
+          git config user.name "encyclopedia-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/encyclopedia/
+          git commit -m "AI-generated encyclopedia update" || echo "No changes"
+          git push
